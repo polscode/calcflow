@@ -15,8 +15,9 @@ export default function TabsLayout() {
           paddingTop: 10,
           paddingBottom: insets.bottom,
           height: 80 + insets.bottom,
+          borderTopWidth: 0
         },
-        tabBarActiveTintColor: '#6555af',
+        tabBarActiveTintColor: '#8f7fd6',
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: '600'
@@ -43,7 +44,7 @@ export default function TabsLayout() {
           return (
             <Image
               source={icon}
-              style={{ width: 32, height: 32, tintColor: focused ? '#6555af' : '#b2bec3' }}
+              style={{ width: 32, height: 32, tintColor: focused ? '#8f7fd6' : '#b2bec3' }}
               resizeMode="contain"
             />
           );
