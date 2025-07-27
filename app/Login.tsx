@@ -14,10 +14,20 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const inset = useSafeAreaInsets();
 
+  const handleLogin = async () => {
+    try {
+      // const res = await apiClient.post('/auth/authenticate',{
+      //   username: email,
+      //   password: password
+      // });
 
-
-  const handleLogin = () => {
-    alert("Login")
+      // SecureStore.setItemAsync('token', res.data.jwt )
+      router.replace('/Dashboard')
+    } catch (error) {
+      console.log(error)
+      console.log(email + " " + password)
+      
+    }
   }
 
   useEffect(() => {
@@ -26,7 +36,7 @@ const Login = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={{ marginTop: inset.top }} className='flex-1 bg-primary-dark'>
+      <View style={{ marginTop: inset.top, marginBottom: inset.bottom }} className='flex-1 bg-primary-dark'>
       <StatusBar barStyle="light-content" backgroundColor="#212121" />
 
         <Text className='text-sm text-gray-500 text-right mr-10'>Version 1.0.0</Text>
