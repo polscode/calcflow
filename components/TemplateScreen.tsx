@@ -8,19 +8,24 @@ interface TemplateScreenProps {
 }
 
 const TemplateScreen = ({ children }: TemplateScreenProps) => {
+
+
   const inset = useSafeAreaInsets();
+
 
   useEffect(() => {
     SystemUI.setBackgroundColorAsync('#171717');
   }, []);
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={{ marginTop: inset.top }} className='flex-1 bg-primary-dark'>
-        <StatusBar barStyle="light-content" backgroundColor="#212121" />
-        {children}
-      </View>
-    </TouchableWithoutFeedback>
+    
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{ paddingTop: inset.top }} className='flex-1 bg-primary-dark'>
+          <StatusBar barStyle="light-content" backgroundColor="#212121" />
+          {children}
+        </View>
+      </TouchableWithoutFeedback>
+
   );
 };
 

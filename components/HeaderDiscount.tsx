@@ -6,7 +6,7 @@ import { Image, Text, TouchableOpacity, View } from 'react-native';
 export interface HeaderDiscountProps {
   title: string,
   icon: string,
-  number: number | string,
+  number: number,
   onPress?: () => void,
   style?: string,
 }
@@ -43,8 +43,8 @@ const HeaderDiscount: React.FC<HeaderDiscountProps> = ({ icon, title, number, on
             {title}
           </Text>
         </View>
-        <Text className="text-white text-xl text-right bg-[#171717] p-4 rounded-md font-semibold">
-          {number}
+        <Text className="text-white text-xl text-right bg-[#171717] p-4 rounded-md font-semibold w-36">
+          {number.toFixed(2)}
         </Text>
       </View>
     </TouchableOpacity>

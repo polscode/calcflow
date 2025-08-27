@@ -33,7 +33,7 @@ export default function TabsLayout() {
             icon = focused
               ? require('../../assets/images/discount.png')
               : require('../../assets/images/discount.png');
-          } else if (route.name === 'Money') {
+          } else if (route.name === 'Cash') {
             icon = focused
               ? require('../../assets/images/money1.png')
               : require('../../assets/images/money1.png');
@@ -53,7 +53,7 @@ export default function TabsLayout() {
     >
       <Tabs.Screen name='Planilla' options={{ title: "Planilla" }} />
       <Tabs.Screen name='Discount' options={{ title: "Descuentos" }} />
-      <Tabs.Screen name='Money' options={{ title: "Dinero" }} />
+      <Tabs.Screen name='Cash' options={{ title: "Dinero" }} />
       <Tabs.Screen name='Report' options={{ title: "Reporte" }} />
     </Tabs>
   )

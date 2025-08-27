@@ -1,30 +1,22 @@
+
+import { CashUnit, useReportStore } from '@/stores/report.store';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Image, Text, TextInput, View } from 'react-native';
 
 interface MultiplyMoneyProps {
-  denomination: number;
+  cash: CashUnit;
 }
 
-
-const MultiplyMoney: React.FC<MultiplyMoneyProps> = ({ denomination }) => {
+const MultiplyMoney: React.FC<MultiplyMoneyProps> = ({ cash }) => {
 
   const [inputValue, setInputValue] = useState('')
-  const [total, setTotal] = useState(0)
+  const updateCashQuantity = useReportStore(store => store.updateCashQuantity)
 
-
-  const multiply = () => {
-    if (inputValue === '') {
-      setTotal(0)
-    } else {
-      setTotal(denomination * parseFloat(inputValue))
-    }
+  const handleQuantityChange  = (text: string) => {
+    setInputValue(text)
+    updateCashQuantity(cash.id, Number(text))
   }
-
-  useEffect(() => {
-    multiply()
-  }, [inputValue])
-
 
   return (
     <View className='flex-row justify-between items-center'>
@@ -40,7 +32,7 @@ const MultiplyMoney: React.FC<MultiplyMoneyProps> = ({ denomination }) => {
           style={{ width: 20, height: 20 }}
         />
         <Text className='text-xl text-white font-semibold text-right flex-1'>
-          {denomination}
+          {cash.denomination}
         </Text>
       </LinearGradient>
       <Image
@@ -48,10 +40,10 @@ const MultiplyMoney: React.FC<MultiplyMoneyProps> = ({ denomination }) => {
         style={{ width: 25, height: 25 }}
       />
       <TextInput
-        onChangeText={setInputValue}
+        onChangeText={handleQuantityChange}
         value={inputValue}
         keyboardType='numeric'
-        className='border-2 border-[#383838] p-2 text-xl rounded-lg text-white w-1/4 text-center'
+        className='border-2 border-[#383838] p-1 text-xl rounded-lg text-white w-1/4 text-center'
       />
       <Image
         source={require('../assets/images/sort-rigth.png')}
@@ -59,15 +51,14 @@ const MultiplyMoney: React.FC<MultiplyMoneyProps> = ({ denomination }) => {
       />
 
       <LinearGradient
-        style={{ borderRadius: 5 , alignItems: 'center', justifyContent: 'center', height: 40}}
+        style={{ borderRadius: 5, alignItems: 'center', justifyContent: 'center', height: 40 }}
         colors={['#353535', '#555']}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
         className='w-1/3'
       >
-
-        <Text className='text-white text-xl text-right  rounded-lg'>
-          {total}
+        <Text className='text-white text-xl text-right font-xl rounded-lg w-full px-4 font-bold font-poppins'>
+          {(cash.quantity * cash.denomination).toFixed(2)}
         </Text>
       </LinearGradient>
     </View>

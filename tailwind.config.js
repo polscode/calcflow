@@ -8,6 +8,12 @@ module.exports = {
   presets: [require("nativewind/preset")],
   theme: {
     extend: {
+      fontFamily: {
+        roboto: ['RobotoRegular'],
+        spaceMono: ['SpaceMono'],
+        poppins: ['Poppins'],
+        lato: ['Lato'],
+      },
       colors: {
         primary: {
           DEFAULT: '#171717',

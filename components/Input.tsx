@@ -14,7 +14,7 @@ const Input: React.FC<InputProps> = ({icon, value, placeholder, onChangeText, ke
   const source =  icon;
 
   return (
-    <View className='flex-row rounded-lg bg-primary-dark px-3 items-center'>
+    <View className='flex-row rounded-lg bg-primary-dark px-3 items-center gap-2'>
       <Image
         source={source}
         className='w-8 h-8'

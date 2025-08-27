@@ -1,43 +1,43 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FlatList, KeyboardAvoidingView, Modal, Platform, ScrollView, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, useWindowDimensions, View } from 'react-native';
-import Checkbox from './CheckBox';
-import HeaderDiscount, { HeaderDiscountProps } from './HeaderDiscount';
+import { FlatList, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 
-const SumOfAmount: React.FC<HeaderDiscountProps> = ({ icon, title, number }) => {
 
-  type AmoutState = {
-    num: number,
-    _x: number
-  }
 
-  const [amounts, setAmounts] = useState<AmoutState[]>([{ num: 10.2, _x: 4 }, { num: 105.2, _x: 1 }, { num: 1045.2, _x: 2 }, { num: 1.2, _x: 1 }, { num: 105.24, _x: 3 }]);
+export interface SumOfAmountProps {
+  index: number,
+  updateDiscounts?: (index: number, arrayAmount: number[]) => void,
+  arrayAmount: number[],
+}
+
+const SumOfAmount: React.FC<SumOfAmountProps> = ({ index, updateDiscounts, arrayAmount }) => {
+
   const [inputValue, setInputValue] = useState('');
-  const [modal, setModal] = useState(false);
-  const [extractMul, setExtractMul] = useState<number>(1)
-
   const inputRef = useRef<TextInput>(null);
-  const { width, height } = useWindowDimensions()
+  const { width } = useWindowDimensions()
   const widthList = width - 40
 
-  const addAmount = () => {
-    if (inputValue === '') return;
-    setAmounts(prev => [...prev, { num: parseFloat(inputValue) * extractMul, _x: extractMul }]);
-    setInputValue('');
-  }
+  const handleAddAmount = () => {
+    const amount = parseFloat(inputValue.trim());
 
-  const showModal = () => {
-    setModal(true)
-  }
+    if (!isNaN(amount) && updateDiscounts) {
+      const newArray = [...arrayAmount, amount];
+      updateDiscounts(index, newArray);
+      setInputValue('');
+    }
+  };
 
-  const closedModal = () => {
-    setModal(false)
-  }
+  const handleRemoveAmount = (amountToRemove: number, pos: number) => {
+    if (updateDiscounts) {
+      const newArray = arrayAmount.filter((_, i) => i !== pos); // quitamos por índice
+      updateDiscounts(index, newArray);
+    }
+  };
 
   return (
     <View className="w-screen">
       <View className="flex-row justify-center items-center py-2 gap-2">
         <TextInput
-          onSubmitEditing={addAmount}
+          onSubmitEditing={handleAddAmount}
           ref={inputRef}
           value={inputValue}
           onChangeText={setInputValue}
@@ -48,7 +48,7 @@ const SumOfAmount: React.FC<HeaderDiscountProps> = ({ icon, title, number }) => 
           submitBehavior={'submit'}
         />
         <TouchableOpacity
-          onPress={addAmount}
+          onPress={handleAddAmount}
           className='bg-[#6555af] w-28 py-4 rounded-md'
         >
           <Text className="text-white text-center font-semibold text-xl">
@@ -56,109 +56,64 @@ const SumOfAmount: React.FC<HeaderDiscountProps> = ({ icon, title, number }) => 
           </Text>
         </TouchableOpacity>
       </View>
-      <ListAmounts amounts={amounts} widthList={widthList} />
+      <ListAmounts
+        amounts={arrayAmount}
+        widthList={widthList}
+        onRemove={handleRemoveAmount}
+      />
 
-      {/* <---- Modal ----> */}
-
-      <Modal animationType='slide' transparent visible={modal}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={{ flex: 1, justifyContent: 'flex-end' }}
-        >
-          <View className='flex-1 justify-center' style={{ backgroundColor: 'rgba(0,0,0,0.9)' }}>
-
-            <TouchableWithoutFeedback onPress={closedModal}>
-              <View className='absolute top-0 left-0 right-0 bottom-0' />
-            </TouchableWithoutFeedback>
-
-            <View className='h-[60%] overflow-hidden p-4 rounded-lg bg-[#171717]'>
-              <HeaderDiscount title={title} icon={icon} number={5350} />
-              <View className='flex-row p-4'>
-                <TextInput
-                  onSubmitEditing={addAmount}
-                  ref={inputRef}
-                  value={inputValue}
-                  onChangeText={setInputValue}
-                  className="text-white bg-[#242424] rounded-md w-1/2 text-xl font-semibold py-4 px-5 text-center"
-                  placeholder="Monto"
-                  placeholderTextColor="#9ca3af"
-                  keyboardType="numeric"
-                  submitBehavior={'submit'}
-                />
-                <TouchableOpacity
-
-                  onPress={addAmount}
-                  className='bg-[#6555af] w-1/2 py-4 rounded-md'
-                >
-                  <Text className="text-white text-center font-semibold text-xl">
-                    Agregar
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <Mult setExtractMul={setExtractMul} amoutns={amounts} />
-              <Checkbox />
-              <ScrollView
-                keyboardShouldPersistTaps="handled"
-                contentContainerStyle={{ flexGrow: 1 }}
-              >
-                <ListAmounts amounts={amounts} widthList={widthList} />
-              </ScrollView>
-            </View>
-
-
-
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
     </View>
   );
 };
 
-type AmoutState = {
-  num: number,
-  _x: number
-}
-
 interface listAmountsProps {
-  amounts: AmoutState[];
+  amounts: number[];
   widthList: number;
+  onRemove: (amount: number, pos: number) => void;
 }
 
-const ListAmounts: React.FC<listAmountsProps> = ({ amounts, widthList }) => {
+const ListAmounts: React.FC<listAmountsProps> = ({ amounts, widthList, onRemove }) => {
   return (
     <FlatList
       data={amounts}
-      renderItem={({ item }) => <ItemList amount={item} />}
+      renderItem={({ item, index }) => <ItemList amount={item} onDelete={() => onRemove(item, index)} />}
       keyExtractor={(_, index) => index.toString()}
       scrollEnabled={false}
       horizontal
       contentContainerClassName='gap-2 w-100 flex-wrap py-4'
       contentContainerStyle={{ width: widthList }}
+      keyboardShouldPersistTaps='handled'
     />
   )
 }
 
 interface ItemProps {
-  amount: AmoutState;
+  amount: number;
+  onDelete: () => void;
 }
 
-const ItemList = ({ amount }: ItemProps) => {
+const ItemList = ({ amount, onDelete }: ItemProps) => {
+
+
+
   return (
-    <View className="border border-[#6555af] rounded-lg  flex-row relative">
+    <TouchableOpacity
+      onPress={onDelete}
+      className="border border-[#6555af] rounded-lg  flex-row relative">
       <Text className='text-[#bfb7e0] text-lg font-medium p-2'>
-        {amount.num}
+        {amount}
       </Text>
-      {amount._x > 1 && <Text className='bg-[#6555af] text-[#bfb7e0] font-medium absolute rounded-full w-5 h-5 text-center  top-[-8] right-[-8]'>
+      {/* {amount._x > 1 && <Text className='bg-[#6555af] text-[#bfb7e0] font-medium absolute rounded-full w-5 h-5 text-center  top-[-8] right-[-8]'>
         {amount._x}
-      </Text>}
-    </View>
+      </Text>} */}
+    </TouchableOpacity>
   );
 };
 
 
 interface MultProps {
   setExtractMul: (num: number) => void;
-  amoutns: AmoutState[]
+  amoutns: number[]
 }
 
 const Mult: React.FC<MultProps> = ({ setExtractMul, amoutns }) => {
